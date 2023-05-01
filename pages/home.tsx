@@ -3,15 +3,15 @@ import HomeViewComponent from '../src/features/AppRootComponent/AppRootViewCompo
 
 
 
-const HomePage: NextPage = () => {
+const index:NextPage = () => {
 
-    return (
-        <HomeViewComponent />
-    )
+  return (
+    <HomeViewComponent />
+  )
 }
 
 
 
 
 
-export default HomePage
+export default index

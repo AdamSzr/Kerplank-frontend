@@ -30,21 +30,23 @@ const ProjectFileUploadComponent:React.FC<{ project?: Project }> = ({ project })
   const uploadClick:React.FormEventHandler<HTMLFormElement> = async function( event ) {
     event.preventDefault()
 
-    if (!dataForm) return
+    if (!dataForm || !project) return
 
     console.log( `FormData items size --`, dataForm.getAll( `files` ).length )
 
-    const { result, proj } = await uploadMultipleFile( dataForm, `/${project?.id}` ).then( it => ({ ...it, proj:it.project }) )
-    console.log({ result, proj })
-    const idx = ctx.projectList?.findIndex( it => it.id == proj.id )!
+    const uploadResponse = await uploadMultipleFile( dataForm, `/${project.id}` ) // .then( it => ({ ...it, proj:it.project }) )
+    const { result } = uploadResponse
+    const idx = ctx.projectList?.findIndex( it => it.id == project.id )!
+    console.log({ uploadResponse })
     if (result != `ok` || idx < 0) {
       console.error( `Błąd przesyłania pliku` )
       return
     }
-
+    const np:Project = { ...project, files:[ ...project.files, ...uploadResponse.items.map( it => it.path ) ] }
+    console.log({ project, np })
     // console.log( project )
 
-    const newProjList = [ ctx.projectList!.slice( 0, idx ), proj, ctx.projectList!.slice( idx + 1 ) ]
+    const newProjList = [ ctx.projectList!.slice( 0, idx ), np, ctx.projectList!.slice( idx + 1 ) ]
     ctx.setProjectList( newProjList as Project[] )
 
     onUploadSuccess()

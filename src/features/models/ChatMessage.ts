@@ -1,26 +1,26 @@
-import { Project } from "./Project"
 import { Task } from "./Task"
+import { Project } from "./Project"
 
 export type BaseMessage = {
-    id: string,
-    from: string,
+  id: string
+  from: string
 }
 
 export type ChatDataMessage<T extends BaseMessage> = {
-    data: T,
+  data: T
 }
 
 
 export type SimpleChatMessage = { message: string } & BaseMessage
 
-const exampleMessage: ChatDataMessage<SimpleChatMessage> = { data: { from: "frontend", id: "#1234", message: "halo" } }
+const exampleMessage:ChatDataMessage<SimpleChatMessage> = { data:{ from:`frontend`, id:`#1234`, message:`halo` } }
 
 
 
 export type BaseBoardAction = {
-    type:"update"
-    project?:Project,
-    task?:Task,
+  type: "update"
+  project?: Project
+  task?: Task
 }
 
 
