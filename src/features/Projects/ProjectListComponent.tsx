@@ -53,7 +53,7 @@ const ProjectListComponent = () => {
       return <></>
 
     return (<StyledTableRow key={`project-table-row-${project.id}`}>
-      <StyledTableCell><Button variant="contained" color="success" onClick={() => { onProjectIdClick( project.id ) }}>{project.id.substring( 0, 6 )}</Button></StyledTableCell>
+      <StyledTableCell><Button variant="contained" color="success" onClick={() => { onProjectIdClick( project.id ) }}>{project.id?.substring( 0, 6 )}</Button></StyledTableCell>
       <StyledTableCell><Typography fontWeight="bold">{project.title}</Typography></StyledTableCell>
       <StyledTableCell>{project.creator}</StyledTableCell>
       <StyledTableCell>{project.dateTimeCreation}</StyledTableCell>

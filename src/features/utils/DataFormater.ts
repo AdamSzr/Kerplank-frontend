@@ -1,11 +1,11 @@
-export function formatDate(date: string):string {
-    let tmpDate = new Date(date);
+export function formatDate( date:string ): string {
+  let tmpDate = new Date( date )
 
-    return tmpDate.getHours() + ":" + 
-        tmpDate.getMinutes() + " " +
-        tmpDate.getFullYear() + "-" +
-        tmpDate.getMonth()+1 + "-" +
-        tmpDate.getDate();
+  return tmpDate.getHours() + `:` + 
+        tmpDate.getMinutes() + ` ` +
+        tmpDate.getFullYear() + `-` +
+        tmpDate.getMonth() + 1 + `-` +
+        tmpDate.getDate()
 }
 
 

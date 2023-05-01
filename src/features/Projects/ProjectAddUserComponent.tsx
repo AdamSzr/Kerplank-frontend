@@ -4,7 +4,7 @@ import FormGroup from '@mui/material/FormGroup'
 import FormControlLabel from '@mui/material/FormControlLabel'
 import FormControl from '@mui/material/FormControl'
 import Checkbox from '@mui/material/Checkbox'
-import { Box, Button, Divider, Typography } from '@mui/material'
+import { Box, Button, ButtonGroup, Divider, Typography } from '@mui/material'
 import { replaceItemInArray } from '../utils/ArrayUtils'
 import { Project } from '../models/Project'
 import downloadAllUsers from '../api/user-all-fetch'
@@ -22,6 +22,8 @@ const ProjectAddUserComponent:React.FC<{ project?: Project }> = ({ project }) =>
 
   const [ usersInProj, setUsersInProj ] = useState<string[]>()
   const [ allUsersList, setAllUsersList ] = useState<string[]>()
+
+  const [ editState, setEditState ] = useState<boolean>( false )
 
   useEffect( () => {
     if (project) {
@@ -92,31 +94,40 @@ const ProjectAddUserComponent:React.FC<{ project?: Project }> = ({ project }) =>
       }
     >
       <Box>
-        <Typography fontWeight="Bold">
-          Lista użytkowników
-        </Typography>
-        <ul>
-          {allUsersList?.map( it => <li key={it}>{it}</li> )}
-        </ul>
+        
+        {
+          editState ? <></> : <Box>
+            <Typography sx={{ marginTop:1, marginBottom:1 }} fontWeight="bold">Aktualnie w projekcie są</Typography>
 
+            {usersInProj?.join( ` | ` )}
+            <br />
+            <Button onClick={() => setEditState( it => !it )} variant='contained'> edytuj</Button>
+          </Box>
+        }
 
-        <FormControl sx={{ m:1 }} component="fieldset" variant="standard">
-          <FormLabel component="legend">Zaznacz aby dodać lub odznacz aby usunąć</FormLabel>
-          <FormGroup>
-            {allUsersList?.map( email => generateCheckboxFor( email ) )}
-          </FormGroup>
-        </FormControl>
+        {
+          editState ?
+            <>
+              <Typography fontWeight="Bold">
+                Lista użytkowników
+              </Typography>
+
+              <FormControl sx={{ m:1 }} component="fieldset" variant="standard">
+                <FormLabel component="legend">Zaznacz aby dodać lub odznacz aby usunąć</FormLabel>
+                <FormGroup>
+                  {allUsersList?.map( email => generateCheckboxFor( email ) )}
+                </FormGroup>
+
+                <Button sx={{ marginTop:2 }} variant="contained" color="success" onClick={onAddClick}>
+                  Zapisz
+                </Button>
+                <Button onClick={() => setEditState( it => !it )} variant='contained' color='error'> anuluj</Button>
+              </FormControl>
+   
+            </> :
+            <></>
+        }
       </Box>
-
-      <Divider />
-      <Box>
-        <Typography sx={{ marginTop:1, marginBottom:1 }} fontWeight="bold">Aktualnie w projekcie są</Typography>
-
-        {usersInProj?.join( ` | ` )}
-      </Box>
-      <Button sx={{ marginTop:2 }} variant="contained" color="primary" onClick={onAddClick}>
-        Zapisz
-      </Button>
     </Box>
   )
 }
