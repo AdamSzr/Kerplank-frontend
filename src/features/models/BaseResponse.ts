@@ -1,6 +1,6 @@
 
 export type BaseResponse = {
-    result: 'ok' | 'fail'
+  result: 'ok' | 'fail'
 }
 
 

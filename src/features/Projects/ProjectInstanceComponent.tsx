@@ -150,10 +150,26 @@ const ProjectInstanceComponent = () => {
     setActiveView( `file-list` )
   }
 
+  const cutPath = (path:string) => {
+    const indexOfLastSlash = path.lastIndexOf( `/` )
+    if (indexOfLastSlash < 0) return path
+    console.log( path.slice( 0, indexOfLastSlash ) )
+    return path.slice( indexOfLastSlash + 1 )
+  }
+
+
 
   const FileListComponent = () => {
     return (<>
-      {project?.files.map( file => <div key={file}><Link href={`${backendUrlStorage.tryGet()}/api/drive/file?path=${file}`}>{file}</Link></div> )}
+      <table>
+        {
+          project?.files.map( file => (<tr>
+            <td>
+              <div key={file}><Link href={`${backendUrlStorage.tryGet()}/api/drive/file?path=${file}`} download={true}>{cutPath( file )}</Link></div>
+            </td>
+          </tr>) )
+        }
+      </table>
     </>)
   }
 
