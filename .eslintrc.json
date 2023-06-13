@@ -1,3 +1,9 @@
 {
-  "extends": ["next/core-web-vitals","eye"]
+  "extends": [
+    "next/core-web-vitals",
+    "eye"
+  ],
+  "rules": {
+    "@typescript-eslint/no-explicit-any": "off"
+  }
 }
