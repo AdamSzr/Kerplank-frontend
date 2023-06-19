@@ -1,12 +1,23 @@
-import { useEffect } from 'react'
-import getTasks from '../src/features/models/mocks/getTasks'
-import { Task } from '../src/features/models/Task'
-import JiraBoard from '../src/features/JiraBoard'
-// import FormData from 'form-data'
+import { useEffect, useState } from 'react'
+import { groupBy } from '../utils/ArrayUtils'
+import { Task } from '../models/Task'
+import BoardColumn from './BoardColumn'
 
 
+export type JiraBoardProps = {
+  items: Task[]
+  onTaskStateChange: (taskId:string, newState:string) => void
+}
 
-const UploadingComponent = () => {
+export default function index({ items, onTaskStateChange }:JiraBoardProps) {
+
+  const elementsGroupedByColumn = items.reduce( function( r, a ) {
+    r[ a.status ] = r[ a.status ] || []
+    r[ a.status ].push( a )
+    return r
+  }, Object.create( null ) )
+
+  const [ grouped, setGrouped ] = useState( Object.entries( elementsGroupedByColumn ) )
 
 
   const getDragAfterElement = (container:Element, y:number) => {
@@ -29,17 +40,26 @@ const UploadingComponent = () => {
 
     draggableElemenets.forEach( draggable => {
 
-      draggable.addEventListener( `dragstart`, () => {
+      draggable.addEventListener( `dragstart`, e => {
         draggable.classList.add( `dragging` )
       } )
 
-      draggable.addEventListener( `dragend`, () => {
+      draggable.addEventListener( `dragend`, e => {
         draggable.classList.remove( `dragging` )
       } )
 
     } )
 
     containers.forEach( container => {
+      container.addEventListener( `drop`, (e:any) => {
+        // e.preventDefault()
+        e.stopImmediatePropagation()
+        
+        const taskId = e.target?.id.split( `-` ).at( 1 )
+        const newState = container.attributes.getNamedItem( `id` )?.value.split( `-` ).at( 1 )!
+        console.log({ taskId, newState, eTarget:e.target, container })
+        // onTaskStateChange( taskId, newState )
+      } )
 
       container.addEventListener( `dragover`, e => {
         e.preventDefault()
@@ -54,27 +74,31 @@ const UploadingComponent = () => {
 
     } )
   }, [] )
-
+    
   return (
     <>
-      <JiraBoard onTaskStateChange={(task, state) => console.log({ task, state })} items={getTasks() as any} />
+      <div className='board' style={{ display:`flex`, gap:`10px` }}>
+        {
+          grouped.map( ([ title, items ]:any) => {
+            return (<BoardColumn
+              title={title} items={items}
+            />)
+          } )
+        }
 
-      {/* <div className='board' style={{ display:`flex`, gap:`10px` }}>
-        <div className='container' style={{  backgroundColor:`#9e9e9e` }}>
+        {/* <div className='container' style={{  backgroundColor:`#9e9e9e` }}>
           <div className='title' style={{ textAlign:`center` }}> drag-section-1</div>
           <p className="draggable" draggable>1</p>
           <p className="draggable" draggable>2</p>
         </div>
-
+    
         <div className='container' style={{ backgroundColor:`#a67c7c` }}>
           <div className='title' style={{ textAlign:`center` }}> drag-section-2</div>
           <p className="draggable" draggable>3</p>
           <p className="draggable" draggable>4</p>
-        </div>
-      </div> */}
-
+        </div> */}
+      </div>
+    
     </>
   )
 }
-
-export default UploadingComponent
