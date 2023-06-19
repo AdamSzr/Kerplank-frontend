@@ -22,37 +22,37 @@ const UploadingComponent = () => {
   }
 
   useEffect( () => {
-    if (!window) return
+    // if (!window) return
 
-    const draggableElemenets = document.querySelectorAll( `.draggable` )
-    const containers = document.querySelectorAll( `.container` )
+    // const draggableElemenets = document.querySelectorAll( `.draggable` )
+    // const containers = document.querySelectorAll( `.container` )
 
-    draggableElemenets.forEach( draggable => {
+    // draggableElemenets.forEach( draggable => {
 
-      draggable.addEventListener( `dragstart`, () => {
-        draggable.classList.add( `dragging` )
-      } )
+    //   draggable.addEventListener( `dragstart`, () => {
+    //     draggable.classList.add( `dragging` )
+    //   } )
 
-      draggable.addEventListener( `dragend`, () => {
-        draggable.classList.remove( `dragging` )
-      } )
+    //   draggable.addEventListener( `dragend`, () => {
+    //     draggable.classList.remove( `dragging` )
+    //   } )
 
-    } )
+    // } )
 
-    containers.forEach( container => {
+    // containers.forEach( container => {
 
-      container.addEventListener( `dragover`, e => {
-        e.preventDefault()
-        const afterElement = getDragAfterElement( container, (e  as MouseEvent).clientY )
-        const draggable = document.querySelector( `.dragging` )!
-        if (!afterElement) {
-          container.appendChild( draggable! )
-        } else {
-          container.insertBefore( draggable, afterElement )
-        }
-      } )
+    //   container.addEventListener( `dragover`, e => {
+    //     e.preventDefault()
+    //     const afterElement = getDragAfterElement( container, (e  as MouseEvent).clientY )
+    //     const draggable = document.querySelector( `.dragging` )!
+    //     if (!afterElement) {
+    //       container.appendChild( draggable! )
+    //     } else {
+    //       container.insertBefore( draggable, afterElement )
+    //     }
+    //   } )
 
-    } )
+    // } )
   }, [] )
 
   return (
