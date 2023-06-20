@@ -9,7 +9,7 @@ export default function BoardItem({ title, id }:Task) {
       id={`task-${id}`} className="draggable"
       onDragStart={
         (e:any) =>  {
-          e.dataTransfer.setData( `text`, id )
+          e.dataTransfer.setData( `taskId`, id )
           e.target.classList.add( `dragging` ) }
       }
       onDragEnd={(e:any) => e.target.classList.remove( `dragging` )}

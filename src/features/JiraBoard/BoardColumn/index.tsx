@@ -7,10 +7,11 @@ import BoardItem from './BoardItem'
 export type BoardColumnProps = {
   title: string
   items: Task[]
+  onTaskStateChange: (taskId:string, newState:string) => void
 }
 
 
-export default function index({ items, title  }:BoardColumnProps) {
+export default function index({ items, title, onTaskStateChange  }:BoardColumnProps) {
 
   const getDragAfterElement = (container:Element, y:number) => {
     const draggableElemenets = Array.from( container.querySelectorAll( `.draggable:not(.dragging)` ) )
@@ -38,11 +39,12 @@ export default function index({ items, title  }:BoardColumnProps) {
       // }
       onDrop={
         e => {
-          const { id, classList } = e.target
+          const { id } = e.target as any
           if (id.startsWith( `task` )) return
 
           const columnName = id.split( `-` ).at( 1 )
-          var taskId = e.dataTransfer.getData( `text` )
+          var taskId = e.dataTransfer.getData( `taskId` )
+          onTaskStateChange( taskId, columnName )
           console.log({ columnName, taskId })
         }
       }
@@ -53,7 +55,10 @@ export default function index({ items, title  }:BoardColumnProps) {
           const draggable = document.querySelector( `.dragging` )!
           const includesDragable = (e.target as HTMLElement).classList.contains( `draggable` )
           try {
-            if (includesDragable) return // means no posible to add item into item
+            if (includesDragable) {
+              console.log({ includesDragable })
+              return
+            } // means no posible to add item into item
             // item can be added only into column.
             if (!afterElement) {
               e.target.appendChild( draggable! )
@@ -67,7 +72,7 @@ export default function index({ items, title  }:BoardColumnProps) {
       // onDragStart={e => console.log( `drag-start-${title}` )}
     >
       <div className='title' style={{ textAlign:`center` }}> {title}</div>
-      {items.map( it => <BoardItem {...it} /> )}
+      {items.map( it => <BoardItem key={`board-item-${it.id}`} {...it} /> )}
     </div>
   )
 }
