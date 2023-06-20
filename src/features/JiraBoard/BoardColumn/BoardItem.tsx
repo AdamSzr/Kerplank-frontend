@@ -7,10 +7,14 @@ export default function BoardItem({ title, id }:Task) {
   return (
     <p
       id={`task-${id}`} className="draggable"
-      onDragStart={(e:any) =>  e.target.classList.add( `dragging` )}
+      onDragStart={
+        (e:any) =>  {
+          e.dataTransfer.setData( `text`, id )
+          e.target.classList.add( `dragging` ) }
+      }
       onDragEnd={(e:any) => e.target.classList.remove( `dragging` )}
-      onDrag={() => console.log( id )} 
+      // onDrag={() => console.log( id )}
       draggable
-    >{title}</p>
+    >{id}-{title}</p>
   )
 }

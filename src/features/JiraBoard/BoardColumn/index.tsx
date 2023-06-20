@@ -27,6 +27,25 @@ export default function index({ items, title  }:BoardColumnProps) {
   return (
     <div
       className='container' id={`column-${title}`} style={{  backgroundColor:`#9e9e9e` }}
+      // onDrop={
+      //   (e:any) => {
+      //     console.log( 1, { id:e.target.id } )
+      //     // const taskId = e.target?.id.split( `-` ).at( 1 )
+      //     // const newState = container.attributes.getNamedItem( `id` )?.value.split( `-` ).at( 1 )!
+      //     // console.log({ taskId, newState, eTarget:e.target, container })
+      //     // onTaskStateChange( taskId, newState )
+      //   }
+      // }
+      onDrop={
+        e => {
+          const { id, classList } = e.target
+          if (id.startsWith( `task` )) return
+
+          const columnName = id.split( `-` ).at( 1 )
+          var taskId = e.dataTransfer.getData( `text` )
+          console.log({ columnName, taskId })
+        }
+      }
       onDragOver={
         (e:any) => {
           e.preventDefault()
@@ -34,7 +53,8 @@ export default function index({ items, title  }:BoardColumnProps) {
           const draggable = document.querySelector( `.dragging` )!
           const includesDragable = (e.target as HTMLElement).classList.contains( `draggable` )
           try {
-            if (includesDragable) return
+            if (includesDragable) return // means no posible to add item into item
+            // item can be added only into column.
             if (!afterElement) {
               e.target.appendChild( draggable! )
             } else {
