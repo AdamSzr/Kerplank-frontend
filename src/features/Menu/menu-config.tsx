@@ -2,7 +2,7 @@ import { ReactNode } from "react"
 import UsersComponent from "../Users/UsersComponent"
 import SettingsComponent from "../SettingsComponent/SettigsComponent"
 import ProjectsComponent from "../Projects/ProjectsComponent"
-import ChatComponent from "../Chat/ChatComponent"
+import ChatComponent from "../Chat/OldChatComponent"
 import AboutAppView from "../About/AboutAppView"
 
 

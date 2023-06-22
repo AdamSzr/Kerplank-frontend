@@ -1,0 +1,18 @@
+
+POST localhost:8080
+###
+GET http://localhost:8080/api/user/all HTTP/1.1
+content-type: application/json
+
+
+"addresseeName":"user",
+###
+
+POST http://localhost:8080/api/chat HTTP/1.1
+content-type: application/json
+
+{
+"authorName": "adam",
+"chatName":"project-dev",
+"content": "Cześć! Właśnie wróciłem z wakacji nad morzem. Chciałem się podzielić wspaniałymi wspomnieniami i opowiedzieć ci o przygodach, jakie tam przeżyłem."
+}
