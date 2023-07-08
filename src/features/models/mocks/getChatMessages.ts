@@ -12,8 +12,8 @@ export default function getChatMessages(): ChatPost[] {
     },
     {
       "id": `6494b6593986e42a39dd08c9`,
-      "authorName": `adam`,
-      "addresseeName": `test`,
+      "authorName": `test`,
+      "addresseeName": `adam`,
       "created": `2023-06-22T21:00:09.241Z`,
       "content": `Hej! Dzisiaj byłem na interesującym wykładzie na temat sztucznej inteligencji. Chciałbym się z tobą podzielić nowo zdobytą wiedzą!`,
       "chatName": null,
@@ -28,8 +28,8 @@ export default function getChatMessages(): ChatPost[] {
     },
     {
       "id": `6494b6643986e42a39dd08cb`,
-      "authorName": `adam`,
-      "addresseeName": `test`,
+      "authorName": `test`,
+      "addresseeName": `adam`,
       "created": `2023-06-22T21:00:20.673Z`,
       "content": `Witaj! Przed chwilą skończyłem czytać nową powieść mojego ulubionego pisarza. Jestem zachwycony i nie mogę się doczekać, aż się nią podzielę!`,
       "chatName": null,
@@ -44,8 +44,8 @@ export default function getChatMessages(): ChatPost[] {
     },
     {
       "id": `6494b6723986e42a39dd08cd`,
-      "authorName": `adam`,
-      "addresseeName": `test`,
+      "authorName": `test`,
+      "addresseeName": `adam`,
       "created": `2023-06-22T21:00:34.816Z`,
       "content": `Cześć! Przed chwilą skończyłem robić coś naprawdę kreatywnego. Chciałbym się z tobą tym podzielić i usłyszeć twoją opinię!`,
       "chatName": null,
@@ -68,8 +68,8 @@ export default function getChatMessages(): ChatPost[] {
     },
     {
       "id": `6494b7443986e42a39dd08d0`,
-      "authorName": `adam`,
-      "addresseeName": `user`,
+      "authorName": `user`,
+      "addresseeName": `adam`,
       "created": `2023-06-22T21:04:04.516Z`,
       "content": `Hej! Dzisiaj wpadłem na genialny pomysł na projekt. Chciałbym go z tobą omówić i zobaczyć, co o tym myślisz.`,
       "chatName": null,

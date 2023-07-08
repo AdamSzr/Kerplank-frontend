@@ -1,26 +1,27 @@
 import { createUseStyles } from 'react-jss'
 import { useContext } from 'react'
-import { AddresseeType, ChatContext } from '..'
+import { Box } from '@mui/system'
+import { AddresseeType, AvailableChat, ChatContext } from '..'
 
 export default function ChatConversationList() {
 
-  const { addresseeList, setSelectedChat } = useContext( ChatContext )
+  const { availableChats, setSelectedChat } = useContext( ChatContext )
 
-  const ConversationItem = (item:AddresseeType) => {
+  const ConversationItem = ({ name, type }:AvailableChat) => {
     return (
-      <div onClick={() => setSelectedChat( item.addresseeName, item.user )}>
-        {item.user == `group` ? `[G] - ` : `[U] - `} {item.addresseeName}
-      </div>
+      <Box onClick={() => setSelectedChat( name )}>
+        {type == `group` ? `[G] - ` : `[U] - `} {name}
+      </Box>
     )
-  }
+  } 
 
   return (
-    <div>
-      <div>Twoje konwersacje</div>
-      <div>
-        {addresseeList.map( it => <ConversationItem {...it} /> )}
-      </div>
-    </div>
+    <Box width="25%" fontSize="20px" padding="5px" lineHeight="30px">
+      <Box borderBottom="1px solid black">Twoje konwersacje</Box>
+      <Box>
+        {availableChats.map( it => <ConversationItem key={it.name + it.type} {...it} /> )}
+      </Box>
+    </Box>
   )
 }
 

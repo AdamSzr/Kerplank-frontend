@@ -1,5 +1,5 @@
 import React, { useContext, useState } from 'react'
-import { Button, Input } from '@mui/material'
+import { Box, Button, Input } from '@mui/material'
 import { ChatContext } from '..'
 
 export default function ChatInput() {
@@ -7,10 +7,7 @@ export default function ChatInput() {
   const { sendMessage, selectedChat } = useContext( ChatContext )
 
   const sendChatMessage = async() => {
-    if (messageText == ``) return
-    if (!selectedChat.name || !selectedChat.type) return
-
-
+    if (messageText == `` || !selectedChat) return
     
     const sendMessageResponse = await sendMessage( messageText, selectedChat )
       .then( it => it.data )
@@ -23,9 +20,9 @@ export default function ChatInput() {
   }
 
   return (
-    <div>
-      <Input value={messageText ?? ``} onChange={e => setMessageText( e.target.value )} />
-      <Button onClick={() => sendChatMessage()}> Wyślij </Button>
-    </div>
+    <Box display="flex" gap="40px" paddingX="25px">
+      <Input fullWidth value={messageText ?? ``} placeholder='wiadomość' onChange={e => setMessageText( e.target.value )} />
+      <Button color='primary' variant='contained' onClick={() => sendChatMessage()}> Wyślij </Button>
+    </Box>
   )
 }
