@@ -1,11 +1,18 @@
-import React, { useState } from 'react'
+import React, { useEffect, useState } from 'react'
 import { Typography } from '@mui/material'
 import { MOCKED_TASKS } from '../src/features/models/mock/tasks'
 import { Task, TaskStatus } from '../src/features/models/Task'
+import getProjectsList from '../src/features/api/download-project-list'
 import DragAndDropBoard, { DragAndDropProps } from '../src/features/DragAndDropBoard'
 
 export default function dnd() {
   const [ tasks, setTasks ] = useState( MOCKED_TASKS )
+
+
+  useEffect( () => {
+    getProjectsList()
+  }, [] )
+
 
   const props:DragAndDropProps<Task> = {
     elements: tasks,
