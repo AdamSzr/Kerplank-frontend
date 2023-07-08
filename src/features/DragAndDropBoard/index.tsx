@@ -1,7 +1,7 @@
 import React, { createContext } from 'react'
 import { Box } from '@mui/system'
 import groupBy from '../utils/groupBy'
-import DropableColum from './components/DropableColum'
+import DropableColumn from './components/DropableColum'
 
 
 
@@ -37,7 +37,7 @@ export default function index<T>( props:DragAndDropProps<T> ) {
     <Box>
       <DragAndDropContext.Provider value={contextValue}>
         <div className='board' style={{ display:`flex`, gap:`10px` }}>
-          {columnsName.map( columnName => <DropableColum key={columnName} name={columnName} /> )}
+          {columnsName.map( columnName => <DropableColumn key={columnName} name={columnName} /> )}
 
           {/* <div className='container' id="drag-section-1" style={{  backgroundColor:`#9e9e9e` }} onDrop={e => drop( e )} onDragOver={e => allowDrop( e )}>
             <div className='title' style={{ textAlign:`center` }}> drag-section-1</div>

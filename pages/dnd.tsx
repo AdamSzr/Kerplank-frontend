@@ -12,7 +12,10 @@ export default function dnd() {
     elementIdProducer: (element:Task) => element.id,
     elementCardProducer: (element:Task) => <Typography fontSize="10px"> {element.title}</Typography>,
     groupBy: `status`,
-    onElementColumnChange: (element, newColumnName) => console.log( `Task ${element} changed status to [${newColumnName}]`, element ),
+    onElementColumnChange: (element, newColumnName) => {
+      console.log( MOCKED_TASKS.find( it => it.id == element ) )
+      console.log( `Task ${element} changed status to [${newColumnName}]`, element )
+    },
   }
 
   return (

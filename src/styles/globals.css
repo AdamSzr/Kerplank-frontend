@@ -17,7 +17,7 @@ body {
 }
 
 
-.container {
+.board-column {
   height: fit-content;
   display: flex;
   flex-direction: column;
