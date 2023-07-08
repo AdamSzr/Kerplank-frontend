@@ -13,7 +13,7 @@ export default function ChatMessageList() {
     console.log( item, user )
 
     return (
-      <Box        
+      <Box
         bgcolor={item.authorName == user?.nickname ? `#d8d7db` : `#f0f0f0`}
         lineHeight="20px"
         boxShadow="0px 0px 4px 0px black"
