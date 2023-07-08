@@ -20,7 +20,7 @@ export type DragAndDropContexType<T> = {
   groupedElements: Record<string, T[]>
   columnsName: string[]
   elementIdProducer: (element:T) => string
-  onElementColumnChange: (elementId:string, newColumnName:string) => void
+  onElementColumnChange?: (elementId:string, newColumnName:string) => void
   elementCardProducer: (element:T) => JSX.Element
 }
 

@@ -23,15 +23,21 @@ export default function DropableColumn({ name }:DropableColumProps) {
     const dropIntoElement = ev.target as HTMLElement
     const dropedIntoAnotherDraggableElement = dropIntoElement.className.includes( `draggable` ) && !dropIntoElement.className.includes( `board-column` )
     const columnToAppend = dropedIntoAnotherDraggableElement ? dropIntoElement.parentElement : dropIntoElement
+    if (!columnToAppend) throw Error( `Element -> Column to append not found` )
+
     const elementId = ev.dataTransfer!.getData( `elementId` )
-    
     if (!elementId) {
       return console.warn( `Cannot drag element with id=[${elementId}]. This element not exists in HTML-document.` )
     }
-    if (!columnToAppend) throw Error( `Element -> Column to append not found` )
 
-    onElementColumnChange( elementId, name )
-    columnToAppend.appendChild( document.getElementById( elementId )! )
+    // if we have function that handles update of element State, the appendChild is unnecessery
+    // cause useState rerender view.
+    if (onElementColumnChange)
+      onElementColumnChange( elementId, name )
+    else {
+      console.log( `Element update fn not provided, this is a placeholder column change` )
+      columnToAppend.appendChild( document.getElementById( elementId )! )
+    }
   }
 
   return (
