@@ -9,7 +9,7 @@ export type DragAndDropProps<T> = {
   elements: T[]
   groupBy: keyof T
   elementIdProducer: (element:T) => string
-  //   columnsNameProducer: (elements:T[]) => string[]
+  onElementClick: (element:T) => void
   columns?: string[]
   onElementColumnChange: (element:string, newColumnName:string) => void
   elementCardProducer: (element:T) => JSX.Element
@@ -21,6 +21,7 @@ export type DragAndDropContexType<T> = {
   groupedElements: Record<string, T[]>
   columnsName: string[]
   elementIdProducer: (element:T) => string
+  onElementClick: (element:T) => void
   onElementColumnChange?: (elementId:string, newColumnName:string) => void
   elementCardProducer: (element:T) => JSX.Element
 }
@@ -33,7 +34,6 @@ export default function index<T>( props:DragAndDropProps<T> ) {
   const columnsName  = props.columns ??  Object.keys( groupedElements )
 
   const contextValue = { ...props, groupedElements, columnsName }
-  console.log( contextValue )
   return (
     <Box>
       <DragAndDropContext.Provider value={contextValue}>

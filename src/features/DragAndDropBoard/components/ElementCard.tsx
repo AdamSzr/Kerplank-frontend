@@ -8,14 +8,14 @@ export type ElementCardProps<T> = {
 
 export default function ElementCard<T>({ element }:ElementCardProps<T>) {
 
-  const { elementCardProducer, elementIdProducer } = useContext( DragAndDropContext )
+  const { elementCardProducer, elementIdProducer, onElementClick } = useContext( DragAndDropContext )
 
   function drag( ev:DragEvent<HTMLDivElement> ) {
     ev.dataTransfer!.setData( `elementId`, elementIdProducer( element ) )
   }
 
   return (
-    <CardElement className='draggable' id={elementIdProducer( element )} draggable onDragStart={e => drag( e )}>
+    <CardElement className='draggable' id={elementIdProducer( element )} draggable onDragStart={e => drag( e )} onClick={() => onElementClick( element )}>
       {elementCardProducer( element )}
     </CardElement>
   )

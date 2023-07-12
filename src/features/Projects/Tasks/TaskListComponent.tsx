@@ -4,6 +4,7 @@ import { Box, Button, ThemeProvider, Container, Typography } from '@mui/material
 import { ProjectViewContext } from '../ProjectsComponent'
 import { Task, TaskStatus } from '../../models/Task'
 import { userStorage } from '../../config'
+import updateTask from '../../api/update-task-fetch'
 import DragAndDropBoard, { DragAndDropProps } from '../../DragAndDropBoard'
 
 const TaskListComponent = () => {
@@ -23,8 +24,6 @@ const TaskListComponent = () => {
 
   if (!ctx.projectList)
     return <>Poczekaj</>
-
-  console.log( taskList )
 
   const goToListView = () => {
     ctx.setViewStage( `project-list` )
@@ -60,28 +59,53 @@ const TaskListComponent = () => {
   }, [] )
   
 
+  const updateTaskStatus = (taskId:string, newStatus:TaskStatus) => {
+    return updateTask( taskId, { status:newStatus } )
+  }
+
+  const onElementClickHandle = (element:Task) => {
+    console.log( `Clicked`, element )
+    goToTaskInstanceView( element.id )
+  }
+
   const props:DragAndDropProps<Task> = {
     elements: taskList ?? [],
     elementIdProducer: (element:Task) => element.id,
+    onElementClick: onElementClickHandle,
     elementCardProducer: (element:Task) => <Typography fontSize="10px"> {element.title}</Typography>,
     groupBy: `status`,
     columns: [ `NEW`, `IN_PROGRESS`, `DONE` ],
     onElementColumnChange: (elementId, newColumnName) => {
-      console.log( getTaskList()?.find( it => it.id == elementId ) )
-      console.log( `Task ${elementId} changed status to [${newColumnName}]`, elementId )
-      if (!taskList) return
-      const targetTaskIdx = taskList.findIndex( it => it.id == elementId )
-      let targetTask = taskList[ targetTaskIdx ]
-      targetTask.status = newColumnName as TaskStatus
-      setTaskList([ ...taskList.slice( 0, targetTaskIdx ), targetTask, ...taskList.slice( targetTaskIdx + 1 ) ])
-      console.log( `updated`, targetTask )
+      // console.log( getTaskList()?.find( it => it.id == elementId ) )
+      updateTaskStatus( elementId, newColumnName as any ).then( response => {
+        console.log( response )
+        const taskIdxInResponse = response.data.project.tasks.findIndex( it => it.id == elementId )
+        if (taskIdxInResponse < 0) return console.log( `update failed` )
+        const updatedTask = response.data.project.tasks[ taskIdxInResponse ]
+
+        console.log( `Task ${updatedTask.id} changed status to [${updatedTask.status}]`, updatedTask )
+        if (!taskList) return
+        const targetTaskIdx = taskList.findIndex( it => it.id == elementId )
+        let targetTask = taskList[ targetTaskIdx ]
+        targetTask.status = updatedTask.status
+        setTaskList([ ...taskList.slice( 0, targetTaskIdx ), targetTask, ...taskList.slice( targetTaskIdx + 1 ) ])
+      } )
+
+      // console.log( `Task ${elementId} changed status to [${newColumnName}]`, elementId )
+      // if (!taskList) return
+      // const targetTaskIdx = taskList.findIndex( it => it.id == elementId )
+      // let targetTask = taskList[ targetTaskIdx ]
+      // targetTask.status = newColumnName as TaskStatus
+      // setTaskList([ ...taskList.slice( 0, targetTaskIdx ), targetTask, ...taskList.slice( targetTaskIdx + 1 ) ])
+      // console.log( `updated`, targetTask )
+
     },
   }
 
   return (
 
     <ThemeProvider theme={theme}>
-      <Container component="main" maxWidth="xs">
+      <Container component="main">
 
         <Box
           sx={
@@ -110,7 +134,7 @@ const TaskListComponent = () => {
 
           <Typography fontWeight="bold">Lista zadań</Typography>
           <DragAndDropBoard {...props} />
-          {getTaskList()?.map( task => createTaskItemView( task ) )}
+          {/* {getTaskList()?.map( task => createTaskItemView( task ) )} */}
         </Box>
       </Container>
     </ThemeProvider>
