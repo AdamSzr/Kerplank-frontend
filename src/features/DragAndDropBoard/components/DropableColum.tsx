@@ -11,7 +11,7 @@ export type DropableColumProps = {
 export default function DropableColumn({ name }:DropableColumProps) {
 
   const { groupedElements, onElementColumnChange } = useContext( DragAndDropContext )
-  const innerElements = groupedElements[ name ]
+  const innerElements:any[] | undefined = groupedElements[ name ]
 
   function allowDrop( ev:DragEvent<HTMLDivElement> ) {
     ev.preventDefault()
@@ -43,7 +43,7 @@ export default function DropableColumn({ name }:DropableColumProps) {
   return (
     <div className='board-column' id={name} style={{  backgroundColor:`#9e9e9e`, gap:`10px` }} onDrop={e => drop( e )} onDragOver={e => allowDrop( e )}>
       <div className='title' style={{ textAlign:`center` }}> {name}</div>
-      {innerElements.map( (element, idx) => <ElementCard key={`element-${idx}`} element={element} /> )}
+      {innerElements?.map( (element, idx) => <ElementCard key={`element-${idx}`} element={element} /> )}
     </div>
   )
 }

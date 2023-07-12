@@ -65,6 +65,7 @@ const TaskListComponent = () => {
     elementIdProducer: (element:Task) => element.id,
     elementCardProducer: (element:Task) => <Typography fontSize="10px"> {element.title}</Typography>,
     groupBy: `status`,
+    columns: [ `NEW`, `IN_PROGRESS`, `DONE` ],
     onElementColumnChange: (elementId, newColumnName) => {
       console.log( getTaskList()?.find( it => it.id == elementId ) )
       console.log( `Task ${elementId} changed status to [${newColumnName}]`, elementId )
