@@ -143,6 +143,11 @@ const ProjectInstanceComponent = () => {
   }
 
   const onElementStateChange = (elementId:string, newColumnName:string) => {
+    const taksk = project?.tasks.find( it => it.id == elementId )
+    const newTaskStauts = newColumnName as TaskStatus
+    if (!taksk) return console.log( `TaskId [${elementId}] not found` )
+    if (taksk.status === newTaskStauts) return console.log( `Task has already status [${newTaskStauts}]` )
+
     updateTaskStatus( elementId, newColumnName as any ).then( response => {
       console.log( response )
       const taskIdxInResponse = response.data.project.tasks.findIndex( it => it.id == elementId )
