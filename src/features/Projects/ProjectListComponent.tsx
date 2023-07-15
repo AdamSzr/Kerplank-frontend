@@ -79,7 +79,6 @@ const ProjectListComponent = () => {
   return (
     <Paper>
       <Button sx={{ margin:1 }} variant="contained" color="primary" onClick={() => { ctx.setViewStage( `project-create` ) }} disabled={!canCreateProjects}> Utwórz projekt</Button>
-      <Button sx={{ margin:1 }} variant="contained" color="primary" onClick={showTaskList}> list zadań</Button>
       <TableContainer component={Paper}>
         <Table aria-label="customized table">
           <TableHead>

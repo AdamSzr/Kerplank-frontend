@@ -3,15 +3,18 @@ import Link from 'next/link'
 import { Box, Button, Container, Divider,  Grid,  Typography } from '@mui/material'
 import SettingsIcon from '@mui/icons-material/Settings'
 import InsertDriveFileIcon from '@mui/icons-material/InsertDriveFile'
+import DashboardIcon from '@mui/icons-material/Dashboard'
 import CloudUploadIcon from '@mui/icons-material/CloudUpload'
 import ArrowBackIcon from '@mui/icons-material/ArrowBack'
 import AddCircleIcon from '@mui/icons-material/AddCircle'
 import AccountCircleIcon from '@mui/icons-material/AccountCircle'
 import { replaceItemInArray } from '../utils/ArrayUtils'
-import { Task } from '../models/Task'
+import { Task, TaskStatus } from '../models/Task'
 import { Project } from '../models/Project'
 import { backendUrlStorage } from '../config'
+import updateTask from '../api/update-task-fetch'
 import projectDelete from '../api/delete-project-fetch'
+import DragAndDropBoard, { DragAndDropProps } from '../DragAndDropBoard'
 import { ProjectViewContext } from './ProjectsComponent'
 import ProjectFileUploadComponent from './ProjectFileUploadComponent'
 import ProjectAddUserComponent from './ProjectAddUserComponent'
@@ -80,24 +83,24 @@ const ProjectInstanceComponent = () => {
       deleteTask( project.id, task.id )
   }
 
-  const taskItemComponent = (task:Task) => {
-    return (<Box
-      sx={
-        {
-          marginTop: 2,
-          marginBottom: 2,
-          display: `flex`,
-          alignItems: `center`,
-          minWidth: 700,
-        }
-      }
-      key={task.id}
-    >
-      <Typography fontWeight="bold" sx={{ marginRight:1, minWidth:`50%` }}>{task.title}</Typography>
-      <Button sx={{ marginRight:2 }} variant="contained" onClick={() => { ctx.setSelectedTaskId( task.id ); ctx.setViewStage( `task-instance` ) }}>Szczegóły</Button>
-      <Button variant="contained" color="error" onClick={() => onDeleteTaskClick( task )}>Usuń zadanie</Button>
-    </Box>)
-  }
+  // const taskItemComponent = (task:Task) => {
+  //   return (<Box
+  //     sx={
+  //       {
+  //         marginTop: 2,
+  //         marginBottom: 2,
+  //         display: `flex`,
+  //         alignItems: `center`,
+  //         minWidth: 700,
+  //       }
+  //     }
+  //     key={task.id}
+  //   >
+  //     <Typography fontWeight="bold" sx={{ marginRight:1, minWidth:`50%` }}>{task.title}</Typography>
+  //     <Button sx={{ marginRight:2 }} variant="contained" onClick={() => { ctx.setSelectedTaskId( task.id ); ctx.setViewStage( `task-instance` ) }}>Szczegóły</Button>
+  //     <Button variant="contained" color="error" onClick={() => onDeleteTaskClick( task )}>Usuń zadanie</Button>
+  //   </Box>)
+  // }
 
   const ShowProjectInfo = () => {
     return (
@@ -117,6 +120,63 @@ const ProjectInstanceComponent = () => {
     )
   }
 
+  const goToTaskInstanceView = (selectedTaskId:string) => {
+    ctx.setViewStage( `task-instance` )
+    ctx.setSelectedTaskId( selectedTaskId )
+  }
+
+
+  const updateTaskStatus = (taskId:string, newStatus:TaskStatus) => {
+    return updateTask( taskId, { status:newStatus } )
+  }
+
+  const onElementClickHandle = (element:Task) => {
+    console.log( `Clicked`, element )
+    goToTaskInstanceView( element.id )
+  }
+
+  const setTaskList = (tasks:Task[]) => {
+    if (!project) return console.log( `project is undefined` )
+
+    const updatedProj = { ...project, tasks }
+    setProject( updatedProj )
+  }
+
+  const onElementStateChange = (elementId:string, newColumnName:string) => {
+    updateTaskStatus( elementId, newColumnName as any ).then( response => {
+      console.log( response )
+      const taskIdxInResponse = response.data.project.tasks.findIndex( it => it.id == elementId )
+      if (taskIdxInResponse < 0) return console.log( `update failed` )
+      const updatedTask = response.data.project.tasks[ taskIdxInResponse ]
+
+      console.log( `Task ${updatedTask.id} changed status to [${updatedTask.status}]`, updatedTask )
+      const taskList = project?.tasks
+      if (!taskList) return
+      const targetTaskIdx = taskList.findIndex( it => it.id == elementId )
+      let targetTask = taskList[ targetTaskIdx ]
+      targetTask.status = updatedTask.status
+
+      setTaskList([ ...taskList.slice( 0, targetTaskIdx ), targetTask, ...taskList.slice( targetTaskIdx + 1 ) ])
+    } )
+  }
+
+
+  const props:DragAndDropProps<Task> = {
+    elements: project?.tasks ?? [],
+    elementIdProducer: (element:Task) => element.id,
+    onElementClick: onElementClickHandle,
+    elementCardProducer: (element:Task) => <Typography fontSize="10px"> {element.title}</Typography>,
+    groupBy: `status`,
+    columns: [ `NEW`, `IN_PROGRESS`, `DONE` ],
+    onElementColumnChange: onElementStateChange,
+  }
+
+
+  // const boardProps:DragAndDropProps<Task> = {
+  //   elements: project?.tasks ?? [],
+
+  // }
+
   const ShowTaskList = () => {
     return (
       <Box>
@@ -126,20 +186,22 @@ const ProjectInstanceComponent = () => {
         <Box>
           <Typography fontWeight="bold">Lista zadań</Typography>
           <Divider />
+          <DragAndDropBoard {...props} />
 
-          {project?.tasks.map( task => taskItemComponent( task ) )}
         </Box>
       </Box>
     )
   }
 
+  const showBoard = () => {
+    setActiveView( `tasks-list` )
+  }
 
   const createTask = () => {
     ctx.setViewStage( `task-create` )
   }
 
   const onAddUsersClick = () => {
-    console.log( `add user clicked` )
     setActiveView( `add-user` )
   }
   const onAddFileClick = () => {
@@ -198,6 +260,9 @@ const ProjectInstanceComponent = () => {
         <Grid item xs={4} display='grid' gap={2}>
 
           <Button startIcon={<ArrowBackIcon />} sx={{ marginRight:0, marginBottom:`30px` }} variant="contained" color="warning" onClick={onBackClick}>Wróć do listy projektów </Button>
+          <Button sx={{ marginRight:0 }} variant="contained" color="success" onClick={showBoard} endIcon={<DashboardIcon />}>
+            tablica
+          </Button>
           <Button sx={{ marginRight:0 }} variant="contained" color="success" onClick={createTask} endIcon={<AddCircleIcon />}>
             utworz zadanie
           </Button>
@@ -211,12 +276,9 @@ const ProjectInstanceComponent = () => {
           <Button sx={{ marginRight:0 }} variant="contained" color="primary" onClick={() => setActiveView( `project-details` )} endIcon={<SettingsIcon />}>
             Informacje i ustawienia
           </Button>
-
-  
         </Grid>
 
         <Grid item xs={8}>
-
           {activeView == `tasks-list` && <ShowTaskList />}
           {activeView == `project-details` && <ShowProjectInfo />}
           {activeView == `upload-file` ? <ProjectFileUploadComponent project={project} /> : ``}

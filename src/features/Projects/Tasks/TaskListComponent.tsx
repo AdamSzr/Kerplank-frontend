@@ -16,6 +16,7 @@ const TaskListComponent = () => {
   const [ taskList, setTaskList ] = useState<Task[] | undefined>()
   const [ myTasksOnly, setMyTasksOnly ] = useState<boolean>( false )
 
+  console.log({ history:appCtx.history })
 
   useEffect( () => {
     if (ctx.projectList) {
@@ -31,12 +32,7 @@ const TaskListComponent = () => {
     appCtx.setHistory( i => [ ...i, () => ctx.setViewStage( `project-list` ) ] )
     ctx.setViewStage( `project-list` )
   }
-  console.log( appCtx.history )
 
-  const goToTaskInstanceView = (selectedTaskId:string) => {
-    ctx.setViewStage( `task-instance` )
-    ctx.setSelectedTaskId( selectedTaskId )
-  }
 
 
 
@@ -56,45 +52,11 @@ const TaskListComponent = () => {
   }, [] )
   
 
-  const updateTaskStatus = (taskId:string, newStatus:TaskStatus) => {
-    return updateTask( taskId, { status:newStatus } )
-  }
-
-  const onElementClickHandle = (element:Task) => {
-    console.log( `Clicked`, element )
-    goToTaskInstanceView( element.id )
-  }
-
-  const onElementStateChange = (elementId:string, newColumnName:string) => {
-    updateTaskStatus( elementId, newColumnName as any ).then( response => {
-      console.log( response )
-      const taskIdxInResponse = response.data.project.tasks.findIndex( it => it.id == elementId )
-      if (taskIdxInResponse < 0) return console.log( `update failed` )
-      const updatedTask = response.data.project.tasks[ taskIdxInResponse ]
-
-      console.log( `Task ${updatedTask.id} changed status to [${updatedTask.status}]`, updatedTask )
-      if (!taskList) return
-      const targetTaskIdx = taskList.findIndex( it => it.id == elementId )
-      let targetTask = taskList[ targetTaskIdx ]
-      targetTask.status = updatedTask.status
-      setTaskList([ ...taskList.slice( 0, targetTaskIdx ), targetTask, ...taskList.slice( targetTaskIdx + 1 ) ])
-    } )
-  }
 
 
-  const props:DragAndDropProps<Task> = {
-    elements: taskList ?? [],
-    elementIdProducer: (element:Task) => element.id,
-    onElementClick: onElementClickHandle,
-    elementCardProducer: (element:Task) => <Typography fontSize="10px"> {element.title}</Typography>,
-    groupBy: `status`,
-    columns: [ `NEW`, `IN_PROGRESS`, `DONE` ],
-    onElementColumnChange: onElementStateChange
-    },
-  }
+
 
   return (
-
     <ThemeProvider theme={theme}>
       <Container component="main">
 
@@ -124,8 +86,7 @@ const TaskListComponent = () => {
           </Box>
 
           <Typography fontWeight="bold">Lista zadań</Typography>
-          <DragAndDropBoard {...props} />
-          <Button onClick={() => console.log( appCtx.history[ 0 ]() )}>back</Button>
+          {/* <Button onClick={() => console.log( appCtx.history[ 0 ]() )}>back</Button> */}
           {/* {getTaskList()?.map( task => createTaskItemView( task ) )} */}
         </Box>
       </Container>
