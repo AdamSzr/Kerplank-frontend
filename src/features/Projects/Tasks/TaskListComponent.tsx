@@ -6,10 +6,12 @@ import { Task, TaskStatus } from '../../models/Task'
 import { userStorage } from '../../config'
 import updateTask from '../../api/update-task-fetch'
 import DragAndDropBoard, { DragAndDropProps } from '../../DragAndDropBoard'
+import { PageContext } from '../../AppRootComponent/AppRootViewComponent'
 
 const TaskListComponent = () => {
 
   const ctx = useContext( ProjectViewContext )
+  const appCtx = useContext( PageContext )
 
   const [ taskList, setTaskList ] = useState<Task[] | undefined>()
   const [ myTasksOnly, setMyTasksOnly ] = useState<boolean>( false )
@@ -26,22 +28,17 @@ const TaskListComponent = () => {
     return <>Poczekaj</>
 
   const goToListView = () => {
+    appCtx.setHistory( i => [ ...i, () => ctx.setViewStage( `project-list` ) ] )
     ctx.setViewStage( `project-list` )
   }
+  console.log( appCtx.history )
 
   const goToTaskInstanceView = (selectedTaskId:string) => {
     ctx.setViewStage( `task-instance` )
     ctx.setSelectedTaskId( selectedTaskId )
   }
 
-  const createTaskItemView = (task:Task) => {
-    return (
-      <Box key={task.id}>
-        {task.title}{` `}
-        <Button sx={{}} variant="outlined" color="warning" onClick={() => goToTaskInstanceView( task.id )}> Szczegóły </Button>
-      </Box>
-    )
-  }
+
 
   const getTaskList = () => {
     const user = userStorage.tryGet()
@@ -68,6 +65,23 @@ const TaskListComponent = () => {
     goToTaskInstanceView( element.id )
   }
 
+  const onElementStateChange = (elementId:string, newColumnName:string) => {
+    updateTaskStatus( elementId, newColumnName as any ).then( response => {
+      console.log( response )
+      const taskIdxInResponse = response.data.project.tasks.findIndex( it => it.id == elementId )
+      if (taskIdxInResponse < 0) return console.log( `update failed` )
+      const updatedTask = response.data.project.tasks[ taskIdxInResponse ]
+
+      console.log( `Task ${updatedTask.id} changed status to [${updatedTask.status}]`, updatedTask )
+      if (!taskList) return
+      const targetTaskIdx = taskList.findIndex( it => it.id == elementId )
+      let targetTask = taskList[ targetTaskIdx ]
+      targetTask.status = updatedTask.status
+      setTaskList([ ...taskList.slice( 0, targetTaskIdx ), targetTask, ...taskList.slice( targetTaskIdx + 1 ) ])
+    } )
+  }
+
+
   const props:DragAndDropProps<Task> = {
     elements: taskList ?? [],
     elementIdProducer: (element:Task) => element.id,
@@ -75,30 +89,7 @@ const TaskListComponent = () => {
     elementCardProducer: (element:Task) => <Typography fontSize="10px"> {element.title}</Typography>,
     groupBy: `status`,
     columns: [ `NEW`, `IN_PROGRESS`, `DONE` ],
-    onElementColumnChange: (elementId, newColumnName) => {
-      // console.log( getTaskList()?.find( it => it.id == elementId ) )
-      updateTaskStatus( elementId, newColumnName as any ).then( response => {
-        console.log( response )
-        const taskIdxInResponse = response.data.project.tasks.findIndex( it => it.id == elementId )
-        if (taskIdxInResponse < 0) return console.log( `update failed` )
-        const updatedTask = response.data.project.tasks[ taskIdxInResponse ]
-
-        console.log( `Task ${updatedTask.id} changed status to [${updatedTask.status}]`, updatedTask )
-        if (!taskList) return
-        const targetTaskIdx = taskList.findIndex( it => it.id == elementId )
-        let targetTask = taskList[ targetTaskIdx ]
-        targetTask.status = updatedTask.status
-        setTaskList([ ...taskList.slice( 0, targetTaskIdx ), targetTask, ...taskList.slice( targetTaskIdx + 1 ) ])
-      } )
-
-      // console.log( `Task ${elementId} changed status to [${newColumnName}]`, elementId )
-      // if (!taskList) return
-      // const targetTaskIdx = taskList.findIndex( it => it.id == elementId )
-      // let targetTask = taskList[ targetTaskIdx ]
-      // targetTask.status = newColumnName as TaskStatus
-      // setTaskList([ ...taskList.slice( 0, targetTaskIdx ), targetTask, ...taskList.slice( targetTaskIdx + 1 ) ])
-      // console.log( `updated`, targetTask )
-
+    onElementColumnChange: onElementStateChange
     },
   }
 
@@ -134,6 +125,7 @@ const TaskListComponent = () => {
 
           <Typography fontWeight="bold">Lista zadań</Typography>
           <DragAndDropBoard {...props} />
+          <Button onClick={() => console.log( appCtx.history[ 0 ]() )}>back</Button>
           {/* {getTaskList()?.map( task => createTaskItemView( task ) )} */}
         </Box>
       </Container>
