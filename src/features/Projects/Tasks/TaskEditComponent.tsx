@@ -118,7 +118,7 @@ const TaskEditComponent:React.FC<{ task?: Task }> = ({ task }) => {
               disabled
             >
             </TextField>
-            {!task.assignedTo && <Button onClick={onAssignClick}>Przypisz do mnie</Button>}
+            {!task.assignedTo && <Button variant='contained' onClick={onAssignClick}>Przypisz do mnie</Button>}
             <TextField
               sx={
                 {

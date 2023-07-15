@@ -1,99 +1,137 @@
-import { Box, Button, Typography } from '@mui/material'
 import React, { useContext, useEffect, useState } from 'react'
-import projectDelete from '../../api/delete-project-fetch'
-import { Project } from '../../models/Project'
-import { Task } from '../../models/Task'
-import { replaceItemInArray } from '../../utils/ArrayUtils'
+import { Box, Button, Container, Switch, Typography } from '@mui/material'
 import { ProjectViewContext } from '../ProjectsComponent'
+import { formatDate } from '../../utils/DataFormater'
+import { replaceItemInArray } from '../../utils/ArrayUtils'
+import { Task } from '../../models/Task'
+import { Project } from '../../models/Project'
+import projectDelete from '../../api/delete-project-fetch'
 import TaskEditComponent from './TaskEditComponent'
 
 const TaskInstanceView = () => {
-    const ctx = useContext(ProjectViewContext)
+  const ctx = useContext( ProjectViewContext )
 
-    const [task, setTask] = useState<Task | undefined>()
+  const [ task, setTask ] = useState<Task | undefined>()
+  const [ editMode, setEditMode ] = useState( false )
 
-    useEffect(() => {
+  useEffect( () => {
 
-        if (ctx.selectedTaskId && ctx.projectList) {
-            const task = tryFindTask(ctx.selectedTaskId)
-            if (!task)
-                return
+    if (ctx.selectedTaskId && ctx.projectList) {
+      const task = tryFindTask( ctx.selectedTaskId )
+      if (!task)
+        return
 
-            console.log(task)
-            setTask(task)
-        }
-
-    }, [ctx.setSelectedTaskId])
-
-
-    const tryFindTask = (taskId: string): Task | undefined => {
-        if (ctx.projectList)
-        {
-            const project = tryFindProject(ctx.projectList, taskId)
-            console.log({project})
-            return project?.tasks.find(task => task.id == taskId)
-        }
+      console.log( task )
+      setTask( task )
     }
 
-    const tryFindProject = (projectList: Project[], taskId: string): Project | undefined => {
-        const doesProjContainTask = (project: Project): boolean => {
-            return project.tasks.some(task => task.id == taskId)
-        }
+  }, [ ctx.setSelectedTaskId ] )
 
-        const project = projectList.find(it => doesProjContainTask(it))
-        return project
+
+  const tryFindTask = (taskId:string): Task | undefined => {
+    if (ctx.projectList)
+    {
+      const project = tryFindProject( ctx.projectList, taskId )
+      console.log({ project })
+      return project?.tasks.find( task => task.id == taskId )
+    }
+  }
+
+  const tryFindProject = (projectList:Project[], taskId:string): Project | undefined => {
+    const doesProjContainTask = (project:Project): boolean => {
+      return project.tasks.some( task => task.id == taskId )
     }
 
+    const project = projectList.find( it => doesProjContainTask( it ) )
+    return project
+  }
 
-    const backToList = () => {
-        ctx.setViewStage('project-instance')
-        ctx.setSelectedTaskId(undefined)
+
+  const backToList = () => {
+    ctx.setViewStage( `project-instance` )
+    ctx.setSelectedTaskId( undefined )
+  }
+
+  const deleteTask = async() => {
+    console.log({ ctx })
+    if (!ctx.selectedProjectId || !task) return
+    const response = await projectDelete( ctx.selectedProjectId, { taskId:task.id } )
+    console.log( response )
+    if (response.status == 200 && ctx.projectList) {
+      console.log( `delete task success`, task.id )
+      ctx.setProjectList( replaceItemInArray( ctx.projectList, response.data.project, item => item.id == ctx.selectedProjectId ) )
+      ctx.setViewStage( `project-instance` )
+      ctx.setSelectedTaskId( undefined )
+    } else {
+      console.log( `FAILED` )
     }
-
-    const deleteTask = async () => {
-        console.log({ctx})
-        if (!ctx.selectedProjectId || !task) return
-        const response = await projectDelete(ctx.selectedProjectId, { taskId: task.id })
-        console.log(response)
-        if (response.status == 200 && ctx.projectList) {
-            console.log("delete task success", task.id)
-            ctx.setProjectList(replaceItemInArray(ctx.projectList, response.data.project, (item) => item.id == ctx.selectedProjectId))
-            ctx.setViewStage('project-instance')
-            ctx.setSelectedTaskId(undefined)
-            
-        } else {
-            console.log("FAILED")
-        }
-    }
+  }
 
 
-    return (
-        <Box sx={{marginTop: 2}}>
-            <Typography>
-                Tytuł: {task?.title}
-            </Typography>
-            <Typography>
-                Opis: {task?.description}
-            </Typography>
-            <Typography>
-                Przypisany do: {task?.assignedTo}
-            </Typography>
-            <Typography>
-                Status: {task?.status}
-            </Typography>
-            <Typography>
-                Data utworzenia zgłoszenia: {task?.dateTimeCreation}
-            </Typography>
-            <Typography>
-                Przewidywana data zakończenia: {task?.dateTimeCreation}
-            </Typography>
-            <Box sx={{marginTop: 1, marginBottom: 1}}>
-                <Button sx={{marginRight: 1}} variant="contained" color="primary" onClick={backToList}> Wróć</Button>
+
+
+  if (!task) return console.log( `Task is not available` )
+
+  return (
+    <Box sx={{ marginTop:2 }}>
+      <Box sx={{ display:`flex`, justifyContent:`right`, alignItems:`center` }}>
+        {editMode ? `anuluj` : `edytuj`} <Switch color={editMode ? `error` : `success`} onChange={e => setEditMode( e.target.checked )} />
+      </Box>
+      {
+        !editMode && <>
+          <Container
+            sx={
+              {
+                display: `flex`,
+                flexDirection: `column`,
+                alignItems: `center`,
+              }
+            }
+          >
+            <Box
+              sx={
+                {
+                  border: 3,
+                  borderRadius: 5,
+                  borderColor: `warning.main`,
+                  marginTop: 2,
+                  padding: 2,
+                  minWidth: 500,
+                  display: `flex`,
+                  flexDirection: `column`,
+                  alignItems: `center`,
+                }
+              }
+            >
+              <Typography>
+                <b>Tytuł:</b> {task.title}
+              </Typography>
+              <Typography>
+                <b> Opis:</b> {task.description}
+              </Typography>
+              <Typography>
+                <b> Przypisany do:</b> {task.assignedTo}
+              </Typography>
+              <Typography>
+                <b> Status:</b> {task.status}
+              </Typography>
+              <Typography>
+                <b> Data utworzenia zgłoszenia:</b> {task.dateTimeCreation}
+              </Typography>
+              <Typography>
+                <b>Przewidywana data zakończenia:</b> {formatDate( task.dateTimeDelivery, true )}
+              </Typography>
+              <Box sx={{ marginTop:1, marginBottom:1 }}>
+                <Button sx={{ marginRight:1 }} variant="contained" color="primary" onClick={backToList}> Wróć</Button>
                 <Button variant="contained" color="error" onClick={deleteTask}> Usuń zadanie</Button>
+              </Box>
             </Box>
-            <TaskEditComponent task={task} />
-        </Box>
-    )
+          </Container>
+        </>
+      }
+      {editMode && <TaskEditComponent task={task} />}
+    </Box>
+  )
 }
 
 export default TaskInstanceView

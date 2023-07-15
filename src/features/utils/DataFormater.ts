@@ -1,11 +1,12 @@
-export function formatDate( date:string ): string {
+export function formatDate( date:string, userFrendly?:boolean ): string {
   let tmpDate = new Date( date )
+  if (userFrendly) return tmpDate.toLocaleString()
 
-  return tmpDate.getHours() + `:` + 
+  return tmpDate.getHours() + `:` +
         tmpDate.getMinutes() + ` ` +
-        tmpDate.getFullYear() + `-` +
-        tmpDate.getMonth() + 1 + `-` +
-        tmpDate.getDate()
+        tmpDate.getDate() + `-` +
+        tmpDate.getMonth()  + `-` +
+        tmpDate.getFullYear()
 }
 
 
