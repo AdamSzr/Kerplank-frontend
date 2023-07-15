@@ -1,5 +1,4 @@
 import React, { useContext, useState } from 'react'
-import { it } from 'node:test'
 import { createTheme } from "@mui/material/styles"
 import { Box, Button, TextField, Container, ThemeProvider, Typography } from '@mui/material'
 import { CreateProjectRequestBody } from '../models/request/CreateProjectRequest'
@@ -61,7 +60,7 @@ function ProjectCreateComponent() {
             }
           }
         >
-          <Button sx={{ marginTop:2 }} variant="contained" color="success" onClick={() => { ctx.setViewStage( `project-list` ) }}> lista projektów</Button>
+          <Button sx={{ marginTop:2 }} variant="contained" color="error" onClick={() => { ctx.setViewStage( `project-list` ) }}> wróć</Button>
           <Box
             component="form"
             sx={
