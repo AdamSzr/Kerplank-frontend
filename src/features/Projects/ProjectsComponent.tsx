@@ -59,9 +59,9 @@ const ProjectsComponent = () => {
       {viewStage == `project-list` && <ProjectListComponent />}
       {viewStage == `project-create` && <ProjectCreateComponent />}
       {viewStage == `project-instance` && selectedProjectId != undefined && <ProjectInstanceComponent />}
-      {viewStage == `task-instance` && selectedTaskId != undefined && <TaskInstanceView />}
+      {viewStage == `task-instance` && selectedTaskId != undefined && <TaskInstanceView setActiveView={view => setViewStage( view as any )} />}
       {viewStage == `task-create` && selectedProjectId != undefined && <TaskCreateComponent />}
-      {viewStage == `task-list` && <TaskListComponent />}
+      {/* {viewStage == `task-list` && <TaskListComponent />} */}
     </ProjectViewContext.Provider>
   )
 }

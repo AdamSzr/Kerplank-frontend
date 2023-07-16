@@ -2,11 +2,12 @@ import React, { useContext, useState } from 'react'
 import { createTheme, ThemeProvider } from "@mui/material/styles"
 import { Box, Button, Container, Divider, MenuItem, Select, TextField, Typography } from '@mui/material'
 import { ProjectViewContext } from '../ProjectsComponent'
+import { replaceItemInArray } from '../../utils/ArrayUtils'
 import { Task } from '../../models/Task'
 import { userStorage } from '../../config'
 import updateTask, { UpdateTaskRequest } from '../../api/update-task-fetch'
 
-const TaskEditComponent:React.FC<{ task?: Task }> = ({ task }) => {
+const TaskEditComponent:React.FC<{ task?: Task; setActiveView: (view:string) => void}> = ({ task }) => {
 
   const ctx = useContext( ProjectViewContext )
 
@@ -18,11 +19,20 @@ const TaskEditComponent:React.FC<{ task?: Task }> = ({ task }) => {
   }
 
   const onUpdateClick = async() => {
+    if (!ctx.projectList) console.log( `No project in ctx` )
+
     const response = await updateTask( task.id, request )
-    console.log({ response, request })
-    if (response.status == 201) {
-      console.log( `Task updated` )
-    }
+    
+  
+    // if (response.status == 201) {
+    // }
+
+    console.log({ response })
+    backToList()
+    const updatedElements = replaceItemInArray( ctx.projectList!, response.data.project, it => it.tasks.map( it => it.id ).includes( task.id ) )
+    ctx.setProjectList( updatedElements )
+    // todo set task to new.
+
   }
 
 
@@ -39,6 +49,12 @@ const TaskEditComponent:React.FC<{ task?: Task }> = ({ task }) => {
 
     setRequest( it => ({ ...it, ...update }) )
 
+  }
+
+
+  const backToList = () => {
+    ctx.setViewStage( `project-instance` )
+    ctx.setSelectedTaskId( undefined )
   }
 
   const theme = createTheme()

@@ -8,7 +8,7 @@ import { Project } from '../../models/Project'
 import projectDelete from '../../api/delete-project-fetch'
 import TaskEditComponent from './TaskEditComponent'
 
-const TaskInstanceView = () => {
+const TaskInstanceView = ({ setActiveView }:{setActiveView: (view:string) => void}) => {
   const ctx = useContext( ProjectViewContext )
 
   const [ task, setTask ] = useState<Task | undefined>()
@@ -32,7 +32,6 @@ const TaskInstanceView = () => {
     if (ctx.projectList)
     {
       const project = tryFindProject( ctx.projectList, taskId )
-      console.log({ project })
       return project?.tasks.find( task => task.id == taskId )
     }
   }
@@ -70,7 +69,7 @@ const TaskInstanceView = () => {
 
 
 
-  if (!task) return console.log( `Task is not available` )
+  if (!task) { return <>Task is not available</> }
 
   return (
     <Box sx={{ marginTop:2 }}>
@@ -129,7 +128,7 @@ const TaskInstanceView = () => {
           </Container>
         </>
       }
-      {editMode && <TaskEditComponent task={task} />}
+      {editMode && <TaskEditComponent task={task} setActiveView={setActiveView} />}
     </Box>
   )
 }
