@@ -1,19 +1,19 @@
 
 
 import axios, { AxiosResponse } from "axios"
-import { backendUrlStorage, Endpoints, jwtTokenStorage } from "../config"
-import { BaseResponse } from "../models/BaseResponse"
 import { CreateUserRequest } from "../models/request/CreateUserRequest"
 import { UserMe } from "../models/UserMe"
-import { ax } from "./ax"
+import { BaseResponse } from "../models/BaseResponse"
+import { backendUrlStorage, Endpoints, jwtTokenStorage } from "../config"
 import { customFetch } from "./custom-fetch"
+import { ax } from "./ax"
 
 
 
 
-const deleteAccount = (nickname: string) => {
-    const url = Endpoints["delete.user"].replace(':userId:', nickname)
-    return ax<BaseResponse>(url, 'DELETE')
+const deleteAccount = (nickname:string) => {
+  const url = Endpoints[ `delete.user` ].replace( `:userId:`, nickname )
+  return ax<BaseResponse>( url, `DELETE` )
 
 }
 

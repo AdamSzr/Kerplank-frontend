@@ -1,4 +1,5 @@
 import React, { useContext, useState } from 'react'
+import { DateTimePicker } from '@mui/x-date-pickers/DateTimePicker'
 import { createTheme, ThemeProvider } from "@mui/material/styles"
 import { Box, Button, Container, Divider, MenuItem, Select, TextField, Typography } from '@mui/material'
 import { ProjectViewContext } from '../ProjectsComponent'
@@ -6,6 +7,7 @@ import { replaceItemInArray } from '../../utils/ArrayUtils'
 import { Task } from '../../models/Task'
 import { userStorage } from '../../config'
 import updateTask, { UpdateTaskRequest } from '../../api/update-task-fetch'
+
 
 const TaskEditComponent:React.FC<{ task?: Task; setActiveView: (view:string) => void}> = ({ task }) => {
 
@@ -19,19 +21,18 @@ const TaskEditComponent:React.FC<{ task?: Task; setActiveView: (view:string) => 
   }
 
   const onUpdateClick = async() => {
+    if (request.dateTimeCreation && isValidDate( request.dateTimeCreation ))
+      return console.error( `invalid date format` )
+    if (request.dateTimeDelivery && isValidDate( request.dateTimeDelivery ))
+      return console.error( `invalid date format` )
+
     if (!ctx.projectList) console.log( `No project in ctx` )
 
     const response = await updateTask( task.id, request )
-    
-  
-    // if (response.status == 201) {
-    // }
-
-    console.log({ response })
+    if (response.status != 201) return console.error( `update failed`, response )
     backToList()
     const updatedElements = replaceItemInArray( ctx.projectList!, response.data.project, it => it.tasks.map( it => it.id ).includes( task.id ) )
     ctx.setProjectList( updatedElements )
-    // todo set task to new.
 
   }
 
@@ -42,10 +43,13 @@ const TaskEditComponent:React.FC<{ task?: Task; setActiveView: (view:string) => 
       setRequest( it => ({ ...it, assignedTo:user.email }) )
   }
 
+  const isValidDate = (date:string) =>  !isNaN( (new Date( date )).getDate() )
   const updateField = (key:keyof UpdateTaskRequest, value:any) => {
+
+    
     let update:any = {}
     update[ key ] = value
-    console.log({ old:request[ key ], key, value, update })
+    
 
     setRequest( it => ({ ...it, ...update }) )
 
@@ -135,6 +139,7 @@ const TaskEditComponent:React.FC<{ task?: Task; setActiveView: (view:string) => 
             >
             </TextField>
             {!task.assignedTo && <Button variant='contained' onClick={onAssignClick}>Przypisz do mnie</Button>}
+            <DateTimePicker label="Basic date time picker" />
             <TextField
               sx={
                 {

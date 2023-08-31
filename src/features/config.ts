@@ -6,8 +6,6 @@ export const backendUrlStorage = useStorage<string>( `kerplank-backend-url` )
 export const jwtTokenStorage = useStorage<string>( `kerplank-jwt` )
 export const userStorage = useStorage<User>( `kerplank-user` )
 
-
-
 export class Endpoints {
   static login = `/api/auth/login`
   static userMe = `/api/user/me`

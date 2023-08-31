@@ -19,7 +19,6 @@ export type UpdateTaskRequest = {
 
 
 const updateTask = (taskId:string, updateTaskRequest:UpdateTaskRequest) => {
-
   return ax<{project: Project}>( Endpoints[ `edit.task` ].replace( `:taskId:`, taskId ), `PUT`, updateTaskRequest )
 }
 

@@ -19,6 +19,7 @@ export default function dnd() {
     elementIdProducer: (element:Task) => element.id,
     elementCardProducer: (element:Task) => <Typography fontSize="10px"> {element.title}</Typography>,
     groupBy: `status`,
+    onElementClick: e => console.log( e ),
     onElementColumnChange: (elementId, newColumnName) => {
       console.log( MOCKED_TASKS.find( it => it.id == elementId ) )
       console.log( `Task ${elementId} changed status to [${newColumnName}]`, elementId )

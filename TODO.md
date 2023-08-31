@@ -5,3 +5,5 @@
 - [ ] skrypt inicjalizujący bazę danych
 
 https://github.com/rcdexta/react-trello??
+
+db.createCollection('chatPost', { capped: true, size: 4194304 })

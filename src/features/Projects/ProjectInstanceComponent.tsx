@@ -15,6 +15,7 @@ import { backendUrlStorage } from '../config'
 import updateTask from '../api/update-task-fetch'
 import projectDelete from '../api/delete-project-fetch'
 import DragAndDropBoard, { DragAndDropProps } from '../DragAndDropBoard'
+import TaskBoardElement from './Tasks/TaskBoardElement'
 import { ProjectViewContext } from './ProjectsComponent'
 import ProjectFileUploadComponent from './ProjectFileUploadComponent'
 import ProjectAddUserComponent from './ProjectAddUserComponent'
@@ -171,7 +172,7 @@ const ProjectInstanceComponent = () => {
     elements: project?.tasks ?? [],
     elementIdProducer: (element:Task) => element.id,
     onElementClick: onElementClickHandle,
-    elementCardProducer: (element:Task) => <Typography fontSize="10px"> {element.title}</Typography>,
+    elementCardProducer: (element:Task) => <TaskBoardElement task={element} />,
     groupBy: `status`,
     columns: [ `NEW`, `IN_PROGRESS`, `DONE` ],
     onElementColumnChange: onElementStateChange,

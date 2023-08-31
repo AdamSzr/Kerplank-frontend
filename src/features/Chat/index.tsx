@@ -5,7 +5,7 @@ import { Box, Typography } from '@mui/material'
 import createQueryFrom from '../utils/createQuery'
 import { groupBy } from '../utils/ArrayUtils'
 import { ChatPost, ChatPostResponse } from '../models/ChatPost'
-import { userStorage } from '../config'
+import { backendUrlStorage, userStorage } from '../config'
 import createChatPost from '../api/create-chat-post-fetch'
 import NewMessageComponent from './components/NewMessageComponent'
 import ChatMessageList from './components/ChatMessageList'
@@ -62,7 +62,7 @@ export default function index() {
 
   useEffect( () => {
     if (messages) return
-    const eventSource = new EventSource( `http://localhost:8080/api/chat` + createQueryFrom( query ) )
+    const eventSource = new EventSource( `${backendUrlStorage.getOrThrow()}/api/chat` + createQueryFrom( query ) )
     console.log( `conecting to server` )
     eventSource.onmessage = event   => {
       const data = JSON.parse( event.data )

@@ -1,6 +1,6 @@
 
 
 export type UpdateProjectRequest = {
-    files?:string[]
-    users?:string[]
+  files?: string[]
+  users?: string[]
 }

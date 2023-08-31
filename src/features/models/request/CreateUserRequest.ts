@@ -1,13 +1,13 @@
-import { BaseResponse } from "../BaseResponse"
 import { User } from "../User"
+import { BaseResponse } from "../BaseResponse"
 
 export type CreateUserRequest = {
-    nickname: string
-    password: string,
-    email: string,
+  nickname: string
+  password: string
+  email: string
 }
 
 export type CreateUserResponse = {
-    user:User
+  user: User
 
 } & BaseResponse

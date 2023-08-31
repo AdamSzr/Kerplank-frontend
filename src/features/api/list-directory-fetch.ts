@@ -1,14 +1,14 @@
 
 
-import { Endpoints } from "../config"
 import { CreateUserRequest } from "../models/request/CreateUserRequest"
-import { ax } from "./ax"
+import { Endpoints } from "../config"
 import { customFetch } from "./custom-fetch"
+import { ax } from "./ax"
 
 
-const uploadFile = (directoryPath: string, files: File) => { // TODO set query param
+const uploadFile = (directoryPath:string, files:File) => { // TODO set query param
 
-   return ax(Endpoints["drive.path"] + directoryPath, 'POST', { file: files })
+  return ax( Endpoints[ `drive.path` ] + directoryPath, `POST`, { file:files } )
 }
 
 export default uploadFile
